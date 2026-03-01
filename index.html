@@ -362,7 +362,7 @@
             color: var(--text-muted);
         }
 
-        /* --- TICKER --- */
+        /* --- TICKER SCORREVOLE OTTIMIZZATO PER RASPBERRY PI --- */
         .ticker {
             height: 50px;
             background: rgba(0, 0, 0, 0.8);
@@ -387,10 +387,23 @@
             z-index: 2;
         }
 
-        .ticker-text { white-space: nowrap; animation: scroll 35s linear infinite; font-weight: 300; }
+        .ticker-text { 
+            white-space: nowrap; 
+            animation: scroll 35s linear infinite; 
+            font-weight: 300; 
+            /* Accelerazione Hardware per fludità su Raspberry Pi */
+            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
         .ticker-text strong { color: var(--blue); font-weight: 700; }
 
-        @keyframes scroll { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        @keyframes scroll { 
+            0% { transform: translate3d(100vw, 0, 0); } 
+            100% { transform: translate3d(-100%, 0, 0); } 
+        }
+
         @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(255, 61, 87, 0.4); } 50% { opacity: 0.5; box-shadow: 0 0 0px transparent; } }
         @keyframes blink { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px var(--orange)); } 50% { opacity: 0.2; filter: none; } }
         .blink { animation: blink 1.5s infinite; filter: grayscale(0.2); }
