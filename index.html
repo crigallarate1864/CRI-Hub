@@ -1,426 +1,641 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>DASHBOARD AUTOPARCO</title>
+    <meta charset="UTF-8">
+    <title>DASHBOARD AUTOPARCO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Palette Tecnologica e Minimale (NIGHT MODE DEFAULT) */
+            --bg-base: #030508;
+            --bg-glow: #0a1118;
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
+            
+            /* Colori Neon / HUD */
+            --blue: #00d0ff;
+            --tech-cyan: #00f2ff;
+            --green: #00e676;
+            --orange: #ffab00;
+            --red: #ff3d57;
+            --red-bg: rgba(255, 61, 87, 0.15); /* Sfondo per fuori servizio */
+            --text-main: #f0f4f8;
+            --text-muted: rgba(255, 255, 255, 0.5);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, var(--bg-base) 100%);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
 
-<style>
+        /* --- SCROLLBAR CUSTOM MINIMALE --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--glass-highlight); }
 
-:root{
---bg-base:#030508;
---bg-glow:#0a1118;
---glass-bg:rgba(255,255,255,0.015);
---glass-border:rgba(255,255,255,0.06);
---glass-highlight:rgba(255,255,255,0.1);
+        /* --- HEADER --- */
+        .header {
+            height: 75px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(3, 5, 8, 0.6);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transition: background 0.5s ease;
+        }
 
---blue:#00d0ff;
---tech-cyan:#00f2ff;
---green:#00e676;
---orange:#ffab00;
---red:#ff3d57;
---red-bg:rgba(255,61,87,0.15);
+        .header h1 { 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700; 
+            font-size: 1.2rem; 
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0, 208, 255, 0.4);
+            text-transform: uppercase;
+        }
+        
+        .clock-wrapper { display: flex; align-items: center; gap: 20px; }
+        
+        .live-tag { 
+            font-size: 0.65rem; 
+            font-weight: 900; 
+            color: var(--red); 
+            background: rgba(255, 61, 87, 0.1);
+            border: 1px solid rgba(255, 61, 87, 0.3); 
+            padding: 4px 10px; 
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase; 
+            animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+            box-shadow: 0 0 10px rgba(255, 61, 87, 0.2);
+        }
+        
+        #clock { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 700;
+            font-size: 1.6rem; 
+            color: #fff; 
+            letter-spacing: 1px;
+        }
 
---text-main:#f0f4f8;
---text-muted:rgba(255,255,255,0.5);
-}
+        /* --- DASHBOARD GRID --- */
+        .dashboard {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.4fr;
+            gap: 25px;
+            padding: 30px 40px;
+            min-height: 0;
+            z-index: 1;
+        }
 
-*{box-sizing:border-box;margin:0;padding:0}
+        .col { display: flex; flex-direction: column; gap: 18px; min-height: 0; }
+        
+        .col-title { 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            color: var(--blue); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            padding-bottom: 8px; 
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .col-title::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: var(--blue);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--blue);
+        }
 
-body{
-font-family:'Inter',sans-serif;
-background:radial-gradient(circle at 50% 0%,var(--bg-glow)0%,var(--bg-base)100%);
-color:var(--text-main);
-height:100vh;
-width:100vw;
-display:flex;
-flex-direction:column;
-overflow:hidden;
--webkit-font-smoothing:antialiased;
-}
+        /* --- CARDS MEZZI --- */
+        .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 22px;
+            position: relative;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+            transition: all 0.5s ease;
+        }
 
-.header{
-height:75px;
-padding:0 40px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-background:rgba(3,5,8,0.6);
-border-bottom:1px solid var(--glass-border);
-backdrop-filter:blur(20px);
-}
+        /* LOGICA CAMBIO COLORE ROSSO PER STATUS OFF */
+        .card.status-off {
+            background: linear-gradient(135deg, var(--red-bg) 0%, rgba(255, 61, 87, 0.05) 100%);
+            border: 1px solid rgba(255, 61, 87, 0.3);
+        }
 
-.header h1{
-font-family:'Orbitron',sans-serif;
-font-size:1.2rem;
-letter-spacing:2px;
-color:#fff;
-text-transform:uppercase;
-}
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            box-shadow: 0 0 15px currentColor;
+        }
+        .card.status-ok::before { background: var(--green); color: var(--green); }
+        .card.status-man::before { background: var(--orange); color: var(--orange); }
+        .card.status-off::before { background: var(--red); color: var(--red); }
 
-.clock-wrapper{
-display:flex;
-align-items:center;
-gap:20px;
-}
+        .sigla, .modello, .targa, .badge, .backup, .segnalazione {
+            position: relative;
+            z-index: 5;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
 
-.live-tag{
-font-size:0.65rem;
-font-weight:900;
-color:var(--red);
-padding:4px 10px;
-border-radius:20px;
-border:1px solid rgba(255,61,87,0.3);
-animation:pulse 2s infinite;
-}
+        .sigla { 
+            font-family: 'Inter', sans-serif; 
+            font-size: 2.1vw; 
+            font-weight: 700; 
+            line-height: 1.1; 
+            letter-spacing: 0; 
+        }
+        
+        .modello { font-size: 0.75vw; color: var(--text-muted); margin: 6px 0; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .targa { font-family: 'JetBrains Mono', monospace; font-size: 0.85vw; color: #fff; background: rgba(0,0,0,0.4); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--glass-border); display: inline-block; width: fit-content; }
 
-#clock{
-font-family:'JetBrains Mono',monospace;
-font-size:1.6rem;
-}
+        .badge {
+            align-self: flex-start;
+            margin-top: 12px;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.65vw;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+            border: 1px solid currentColor;
+        }
+        .badge-ok { background: rgba(0, 230, 118, 0.1); color: var(--green); box-shadow: 0 0 10px rgba(0, 230, 118, 0.2); }
+        .badge-man { background: rgba(255, 171, 0, 0.1); color: var(--orange); box-shadow: 0 0 10px rgba(255, 171, 0, 0.2); }
+        .badge-off { background: rgba(255, 61, 87, 0.2); color: var(--red); box-shadow: 0 0 10px rgba(255, 61, 87, 0.4); }
 
-.dashboard{
-flex:1;
-display:grid;
-grid-template-columns:1fr 1fr 1.4fr;
-gap:25px;
-padding:30px 40px;
-min-height:0;
-}
+        .backup {
+            font-size: 0.85vw; 
+            color: var(--text-main); 
+            font-weight: 600; 
+            margin-top: 14px; padding-top: 12px;
+            border-top: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 8px;
+            max-width: 40%; 
+        }
+        .backup strong { 
+            color: var(--blue); 
+            font-weight: 800; 
+            letter-spacing: 0.5px;
+            font-size: 1vw; 
+        }
 
-.col{
-display:flex;
-flex-direction:column;
-gap:18px;
-min-height:0;
-}
+        .segnalazione {
+            font-size: 0.75vw; color: var(--orange);
+            margin-top: 8px; font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+            max-width: 40%; 
+        }
 
-.col-title{
-font-size:0.75rem;
-font-weight:600;
-color:var(--blue);
-text-transform:uppercase;
-letter-spacing:2px;
-padding-bottom:8px;
-border-bottom:1px solid var(--glass-border);
-}
+        /* --- IMMAGINI --- */
+        .img-container {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 60%; 
+            z-index: 0; 
+            pointer-events: none;
+            display: flex;
+            align-items: center; 
+            justify-content: flex-end; 
+            overflow: hidden;
+            border-radius: 0 16px 16px 0;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+            mask-image: linear-gradient(to right, transparent 0%, black 50%);
+        }
 
-.card{
-background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-border:1px solid var(--glass-border);
-border-radius:16px;
-padding:22px;
-position:relative;
-min-height:130px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-overflow:hidden;
-}
+        .vehicle-img {
+            max-height: 100%; 
+            max-width: 100%;  
+            height: auto;
+            width: auto;
+            opacity: 0.35; 
+            filter: contrast(1.1) brightness(1.2) grayscale(0.3) drop-shadow(0 15px 10px rgba(0,0,0,0.3));
+            transform: scaleX(-1); 
+            object-fit: contain; 
+            mix-blend-mode: screen;
+            transition: all 0.5s ease;
+        }
 
-.card.status-off{
-background:linear-gradient(135deg,var(--red-bg),rgba(255,61,87,0.05));
-border:1px solid rgba(255,61,87,0.3);
-}
+        /* --- FLOTTA VARIABILE --- */
+        .var-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
 
-.sigla{
-font-size:2.1vw;
-font-weight:700;
-}
+        .v-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
 
-.modello{
-font-size:0.75vw;
-color:var(--text-muted);
-margin:6px 0;
-text-transform:uppercase;
-}
+        .v-card.off {
+            background: var(--red-bg);
+            border: 1px solid rgba(255, 61, 87, 0.3);
+        }
+        
+        .v-card:hover { background: var(--glass-highlight); }
 
-.targa{
-font-family:'JetBrains Mono',monospace;
-font-size:0.85vw;
-background:rgba(0,0,0,0.4);
-padding:3px 8px;
-border-radius:4px;
-display:inline-block;
-width:fit-content;
-}
+        .v-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            box-shadow: 0 2px 10px currentColor;
+        }
+        .v-card.ok::before { background: var(--green); color: var(--green); }
+        .v-card.man::before { background: var(--orange); color: var(--orange); }
+        .v-card.off::before { background: var(--red); color: var(--red); }
 
-.badge{
-margin-top:12px;
-padding:5px 12px;
-border-radius:30px;
-font-size:0.65vw;
-font-weight:700;
-text-transform:uppercase;
-border:1px solid currentColor;
-}
+        .v-sigla { font-family: 'Inter', sans-serif; font-size: 1vw; font-weight: 700; display: block; letter-spacing: 0; }
+        .v-modello { font-size: 0.6vw; color: var(--text-muted); text-transform: uppercase; display: block; margin: 4px 0; }
+        .v-status { font-size: 0.55vw; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-top: auto; }
 
-.badge-ok{color:var(--green)}
-.badge-man{color:var(--orange)}
-.badge-off{color:var(--red)}
+        .v-segnalazione {
+            font-size: 0.55vw; color: var(--orange);
+            margin-top: 6px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            display: block;
+        }
 
-.img-container{
-position:absolute;
-top:0;
-right:0;
-bottom:0;
-width:60%;
-display:flex;
-align-items:center;
-justify-content:flex-end;
-overflow:hidden;
-}
+        /* ========================================= */
+        /* --- BOX CONTATTI --- */
+        /* ========================================= */
+        .contacts-box {
+            margin-top: auto; 
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 0.65vw;
+            color: var(--text-muted);
+            line-height: 1.4;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+        .contact-role { font-weight: 700; color: var(--orange); text-transform: uppercase; font-size: 0.7vw; margin-bottom: 2px; letter-spacing: 1px;}
+        .contact-name { color: var(--text-main); font-weight: 600; margin-bottom: 2px; font-size: 0.7vw; }
+        .contact-info strong { color: var(--blue); }
 
-.vehicle-img{
-max-height:100%;
-opacity:0.35;
-filter:contrast(1.1) brightness(1.15);
-transform:scaleX(-1);
-object-fit:contain;
-mix-blend-mode:screen;
-}
+        /* --- TICKER SCORREVOLE CONTINUO (AEROPORTO) --- */
+        .ticker {
+            height: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            overflow: hidden; /* Nasconde ciò che esce dal box */
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+            transition: background 0.5s ease;
+        }
+        
+        .ticker::after {
+            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 50px;
+            background: linear-gradient(to right, rgba(0,0,0,1), transparent);
+            z-index: 5;
+        }
+        .ticker::before {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 50px;
+            background: linear-gradient(to left, rgba(0,0,0,1), transparent);
+            z-index: 5;
+        }
 
-.var-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-overflow-y:auto;
-padding-right:5px;
-}
+        /* Il "binario" che scorre infinitamente */
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: scroll-continuous 30s linear infinite;
+            
+            /* Ottimizzazione estrema Hardware per GPU Raspberry Pi */
+            will-change: transform;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
 
-.v-card{
-background:var(--glass-bg);
-border:1px solid var(--glass-border);
-border-radius:12px;
-padding:12px;
-display:flex;
-flex-direction:column;
-}
+        .ticker-text { 
+            white-space: nowrap; 
+            font-weight: 300; 
+            padding-right: 50px; /* Distanza tra le due copie per creare continuità */
+        }
+        .ticker-text strong { color: var(--blue); font-weight: 700; }
 
-.v-sigla{
-font-size:1vw;
-font-weight:700;
-}
+        /* L'animazione sposta il binario esattamente di metà della sua lunghezza totale, per poi riavvolgersi istantaneamente e in modo invisibile */
+        @keyframes scroll-continuous { 
+            0% { -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); } 
+            100% { -webkit-transform: translate3d(-50%, 0, 0); transform: translate3d(-50%, 0, 0); } 
+        }
 
-.v-modello{
-font-size:0.6vw;
-color:var(--text-muted);
-}
+        @keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(255, 61, 87, 0.4); } 50% { opacity: 0.3; box-shadow: 0 0 0px transparent; } }
 
-.v-status{
-font-size:0.55vw;
-font-weight:700;
-margin-top:auto;
-}
+        /* ========================================= */
+        /* --- AUTO LIGHT MODE (08:00 - 18:00) --- */
+        /* ========================================= */
+        body.light-mode {
+            --bg-base: #e2e8f0;
+            --bg-glow: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.9);
+            --red-bg: rgba(217, 38, 59, 0.1);
+            
+            --blue: #0066cc;
+            --tech-cyan: #0088aa;
+            --green: #009944;
+            --orange: #d97700;
+            --red: #d9263b;
+            --text-main: #0f172a;
+            --text-muted: rgba(0, 0, 0, 0.6);
+        }
 
-/* ========================= */
-/* TICKER ULTRA FLUIDO       */
-/* ========================= */
+        body.light-mode .header {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.light-mode .header h1,
+        body.light-mode #clock {
+            color: var(--text-main);
+            text-shadow: none;
+        }
+        
+        body.light-mode .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
 
-.ticker{
-height:50px;
-background:rgba(0,0,0,0.8);
-display:flex;
-align-items:center;
-overflow:hidden;
-font-family:'JetBrains Mono',monospace;
-font-size:1rem;
-border-top:1px solid var(--glass-border);
-position:relative;
-}
+        body.light-mode .card.status-off {
+            background: linear-gradient(135deg, var(--red-bg) 0%, rgba(217, 38, 59, 0.05) 100%);
+        }
 
-.ticker-track{
-display:flex;
-gap:120px;
-animation:tickerMove 40s linear infinite;
-will-change:transform;
-transform:translate3d(0,0,0);
-}
+        body.light-mode .targa {
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.06);
+        }
 
-.ticker-text{
-white-space:nowrap;
-font-weight:300;
-}
+        body.light-mode .sigla, 
+        body.light-mode .modello, 
+        body.light-mode .targa, 
+        body.light-mode .badge, 
+        body.light-mode .backup, 
+        body.light-mode .segnalazione {
+            text-shadow: none;
+        }
 
-.ticker-text strong{
-color:var(--blue);
-font-weight:700;
-}
+        body.light-mode .vehicle-img {
+            opacity: 0.85; 
+            filter: contrast(1.1) brightness(1.05) grayscale(0.2) drop-shadow(0 15px 15px rgba(0,0,0,0.2));
+            mix-blend-mode: normal; 
+        }
+        
+        body.light-mode .contacts-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+        body.light-mode .contact-name {
+            color: var(--text-main);
+        }
 
-@keyframes tickerMove{
-from{transform:translate3d(0,0,0)}
-to{transform:translate3d(-50%,0,0)}
-}
+        body.light-mode .ticker {
+            background: #ffffff;
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        body.light-mode .ticker::after {
+            background: linear-gradient(to right, #ffffff, transparent);
+        }
+        body.light-mode .ticker::before {
+            background: linear-gradient(to left, #ffffff, transparent);
+        }
 
-.ticker::after{
-content:'';
-position:absolute;
-left:0;
-top:0;
-bottom:0;
-width:50px;
-background:linear-gradient(to right,rgba(0,0,0,1),transparent);
-}
+        /* ========================================= */
+        /* --- RESPONSIVE MOBILE (SMARTPHONE) --- */
+        /* ========================================= */
+        @media (max-width: 850px) {
+            body { 
+                height: auto; 
+                min-height: 100vh; 
+                overflow-y: auto; 
+            }
+            .header { 
+                padding: 15px 20px; 
+                flex-direction: column; 
+                gap: 15px; 
+                height: auto;
+                text-align: center;
+            }
+            .dashboard { 
+                grid-template-columns: 1fr; 
+                padding: 20px; 
+                gap: 20px;
+                overflow-y: visible;
+            }
+            .var-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+            .img-container { 
+                width: 50%; 
+            }
+            
+            .sigla { font-size: 1.5rem; }
+            .modello { font-size: 0.8rem; }
+            .targa { font-size: 0.85rem; }
+            .badge { font-size: 0.7rem; }
+            .backup { font-size: 0.85rem; max-width: 55%; }
+            .backup strong { font-size: 0.95rem; }
+            .segnalazione { font-size: 0.75rem; max-width: 55%; }
+            
+            .v-sigla { font-size: 1.1rem; }
+            .v-modello { font-size: 0.75rem; }
+            .v-status { font-size: 0.7rem; }
+            .v-segnalazione { font-size: 0.7rem; white-space: normal; }
+            
+            .contacts-box { font-size: 0.8rem; padding: 12px; }
+            .contact-role { font-size: 0.85rem; }
+            .contact-name { font-size: 0.8rem; }
 
-.ticker::before{
-content:'';
-position:absolute;
-right:0;
-top:0;
-bottom:0;
-width:50px;
-background:linear-gradient(to left,rgba(0,0,0,1),transparent);
-}
+            .ticker { font-size: 0.85rem; }
+        }
 
-@keyframes pulse{
-0%,100%{opacity:1}
-50%{opacity:0.3}
-}
+        @media (max-width: 480px) {
+            .var-grid { grid-template-columns: 1fr; }
+        }
 
-</style>
+    </style>
 </head>
-
 <body>
 
-<div class="header">
-<h1>DASHBOARD AUTOPARCO | REAL-TIME MANAGEMENT</h1>
-<div class="clock-wrapper">
-<span class="live-tag">Live</span>
-<div id="clock">00:00</div>
-</div>
-</div>
+    <div class="header">
+        <h1>DASHBOARD AUTOPARCO | REAL-TIME MANAGEMENT</h1>
+        <div class="clock-wrapper">
+            <span class="live-tag">Live</span>
+            <div id="clock">00:00</div>
+        </div>
+    </div>
 
-<div class="dashboard">
+    <div class="dashboard">
+        <div class="col">
+            <div class="col-title">Gallarate</div>
+            <div id="slot-1"></div>
+            <div id="slot-2"></div>
+        </div>
 
-<div class="col">
-<div class="col-title">Gallarate</div>
-<div id="slot-1"></div>
-<div id="slot-2"></div>
-</div>
+        <div class="col">
+            <div class="col-title">Somma L.do - Sumirago - Malpensa T1</div>
+            <div id="slot-3"></div>
+            <div id="slot-4"></div>
+            <div id="slot-5"></div>
+        </div>
 
-<div class="col">
-<div class="col-title">Somma L.do - Sumirago</div>
-<div id="slot-3"></div>
-<div id="slot-4"></div>
-<div id="slot-5"></div>
-</div>
+        <div class="col">
+            <div class="col-title" style="color: var(--orange); --blue: var(--orange);">Disponibilità Flotta Variabile</div>
+            <div id="slot-var" class="var-grid"></div>
+            
+            <div class="contacts-box">
+                <div class="contact-role">Responsabili Autoparco</div>
+                <div class="contact-name">Paracchini C. - Ghirardi D.</div>
+                <div class="contact-info">Cell: <strong>3387360099</strong></div>
+                <div class="contact-info">mail: <strong>responsabile.autoparco@crigallarate.org</strong></div>
+                
+                <div class="contact-role" style="margin-top: 10px;">Referente Patenti</div>
+                <div class="contact-name">Luongo A.F. <span style="font-weight: 400;">a.i.</span></div>
+                <div class="contact-info">mail: <strong>referente.patenti@crigallarate.org</strong></div>
+            </div>
+        </div>
+    </div>
 
-<div class="col">
-<div class="col-title" style="color:var(--orange)">Disponibilità Flotta Variabile</div>
-<div id="slot-var" class="var-grid"></div>
-</div>
+    <div class="ticker">
+        <div class="ticker-track">
+            <div class="ticker-text">
+                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> 
+            </div>
+            <div class="ticker-text">
+                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> 
+            </div>
+        </div>
+    </div>
 
-</div>
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMtO9pbvrr-yz1xMwquFeonWlhrwz6R_01HXu0swxX6tqrNok0Xjr6KRfIdYRnnGx8ZvjIoN_9vMQi/pub?gid=0&single=true&output=csv';
+        const conFoto = ["VA11-32", "VA11-34", "VA11-35", "VA11-48", "VA11-49", "VA11-81"];
 
-<div class="ticker">
-<div class="ticker-track">
+        async function update() {
+            try {
+                const currentHour = new Date().getHours();
+                if (currentHour >= 8 && currentHour < 18) {
+                    document.body.classList.add('light-mode');
+                } else {
+                    document.body.classList.remove('light-mode');
+                }
 
-<div class="ticker-text">
-MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> •
-</div>
+                const res = await fetch(sheetUrl + '&t=' + Date.now());
+                const csv = await res.text();
+                const sep = csv.includes(';') ? ';' : ',';
+                const lines = csv.split(/\r?\n/).filter(l => l.trim() !== "");
+                const data = lines.slice(1).map(l => l.split(sep).map(p => p.replace(/^"|"$/g, '').trim()));
+                
+                document.getElementById('clock').innerText = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
-<div class="ticker-text">
-MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> •
-</div>
+                document.querySelectorAll('[id^="slot-"]').forEach(el => el.innerHTML = '');
 
-</div>
-</div>
+                const findM = (txt) => data.find(d => d[4]?.toUpperCase().includes(txt.toUpperCase())) || null;
 
-<script>
+                const config = [
+                    { id: "slot-1", m: findM("GALLARATE CONV 1"), b: findM("BACKUP CONV 1") },
+                    { id: "slot-2", m: findM("GALLARATE CONV 2"), b: findM("BACKUP CONV 2") },
+                    { id: "slot-3", m: findM("SOMMA LOMBARDO"),   b: findM("BACKUP CONV SOMMA L.DO") },
+                    { id: "slot-4", m: data.find(d => d[1]?.includes("VA11-81")), b: null },
+                    { id: "slot-5", m: findM("AGG. MXP"),           b: null }
+                ];
 
-const sheetUrl='https://docs.google.com/spreadsheets/d/e/2PACX-1vRMtO9pbvrr-yz1xMwquFeonWlhrwz6R_01HXu0swxX6tqrNok0Xjr6KRfIdYRnnGx8ZvjIoN_9vMQi/pub?gid=0&single=true&output=csv'
+                config.forEach(c => {
+                    if (!c.m) return;
+                    const sigla = c.m[1].toUpperCase();
+                    const status = (c.m[4] || "").toUpperCase();
+                    const sType = status.includes('MANUTENZIONE') ? 'man' : status.includes('FUORI SERVIZIO') ? 'off' : 'ok';
+                    const notes = (c.m[5] || "").trim();
+                    
+                    let photo = conFoto.includes(sigla) ? 
+                        `<div class="img-container"><img src="${sigla}.png" class="vehicle-img"></div>` : '';
 
-const conFoto=["VA11-32","VA11-34","VA11-35","VA11-48","VA11-49","VA11-81"]
+                    document.getElementById(c.id).innerHTML = `
+                        <div class="card status-${sType}">
+                            ${photo}
+                            <div class="sigla">${sigla}</div>
+                            <div class="modello">${c.m[2] || '---'}</div>
+                            <div class="targa">${c.m[3] || '---'}</div>
+                            <div class="badge badge-${sType}">${status}</div>
+                            ${notes ? `<div class="segnalazione">⚠️ ${notes}</div>` : ''}
+                            ${c.b ? `<div class="backup">BACKUP: <strong>${c.b[1]}</strong></div>` : ''}
+                        </div>`;
+                });
 
-async function update(){
+                data.forEach(d => {
+                    const s = (d[4] || "").toUpperCase();
+                    const sigla = d[1];
+                    const modello = d[2] || '---';
+                    if (!sigla || s.includes("GALLARATE") || s.includes("SOMMA") || s.includes("BACKUP") || sigla.includes("11-81") || s.includes("MXP")) return;
+                    
+                    const isM = s.includes('MANUTENZIONE');
+                    const isO = s.includes('FUORI SERVIZIO');
+                    const type = isM ? 'man' : isO ? 'off' : 'ok';
+                    const notes = (d[5] || "").trim();
 
-try{
+                    document.getElementById('slot-var').innerHTML += `
+                        <div class="v-card ${type}">
+                            <span class="v-sigla">${sigla}</span>
+                            <span class="v-modello">${modello}</span>
+                            <span class="v-status" style="color: ${isM ? 'var(--orange)' : isO ? 'var(--red)' : 'var(--green)'}">● ${s}</span>
+                            ${notes ? `<span class="v-segnalazione">⚠️ ${notes}</span>` : ''}
+                        </div>`;
+                });
+            } catch (e) { console.error(e); }
+        }
 
-const res=await fetch(sheetUrl+'&t='+Date.now())
-const csv=await res.text()
-
-const sep=csv.includes(';')?';':','
-
-const lines=csv.split(/\r?\n/).filter(l=>l.trim()!=="")
-const data=lines.slice(1).map(l=>l.split(sep).map(p=>p.replace(/^"|"$/g,'').trim()))
-
-document.getElementById('clock').innerText=
-new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})
-
-document.querySelectorAll('[id^="slot-"]').forEach(el=>el.innerHTML='')
-
-const findM=(txt)=>data.find(d=>d[4]?.toUpperCase().includes(txt.toUpperCase()))||null
-
-const config=[
-{id:"slot-1",m:findM("GALLARATE CONV 1")},
-{id:"slot-2",m:findM("GALLARATE CONV 2")},
-{id:"slot-3",m:findM("SOMMA LOMBARDO")},
-{id:"slot-4",m:data.find(d=>d[1]?.includes("VA11-81"))},
-{id:"slot-5",m:findM("AGG. MXP")}
-]
-
-config.forEach(c=>{
-
-if(!c.m)return
-
-const sigla=c.m[1].toUpperCase()
-const status=(c.m[4]||"").toUpperCase()
-
-const sType=status.includes('MANUTENZIONE')?'man':
-status.includes('FUORI SERVIZIO')?'off':'ok'
-
-let photo=conFoto.includes(sigla)?
-`<div class="img-container"><img src="${sigla}.png" class="vehicle-img"></div>`:''
-
-document.getElementById(c.id).innerHTML=`
-
-<div class="card status-${sType}">
-${photo}
-<div class="sigla">${sigla}</div>
-<div class="modello">${c.m[2]||'---'}</div>
-<div class="targa">${c.m[3]||'---'}</div>
-<div class="badge badge-${sType}">${status}</div>
-</div>
-
-`
-
-})
-
-const container=document.getElementById('slot-var')
-
-data.forEach(d=>{
-
-const s=(d[4]||"").toUpperCase()
-const sigla=d[1]
-
-if(!sigla)return
-
-const isM=s.includes('MANUTENZIONE')
-const isO=s.includes('FUORI SERVIZIO')
-
-const type=isM?'man':isO?'off':'ok'
-
-container.insertAdjacentHTML('beforeend',`
-
-<div class="v-card ${type}">
-<span class="v-sigla">${sigla}</span>
-<span class="v-modello">${d[2]||'---'}</span>
-<span class="v-status">● ${s}</span>
-</div>
-
-`)
-
-})
-
-}catch(e){console.error(e)}
-
-}
-
-setInterval(update,30000)
-update()
-
-</script>
-
+        setInterval(update, 30000); update();
+    </script>
 </body>
 </html>
