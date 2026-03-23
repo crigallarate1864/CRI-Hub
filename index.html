@@ -2,6 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DASHBOARD AUTOPARCO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
@@ -295,26 +296,6 @@
             display: block;
         }
 
-        /* ========================================= */
-        /* --- BOX CONTATTI --- */
-        /* ========================================= */
-        .contacts-box {
-            margin-top: auto; 
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 0.65vw;
-            color: var(--text-muted);
-            line-height: 1.4;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.5s ease;
-        }
-        .contact-role { font-weight: 700; color: var(--orange); text-transform: uppercase; font-size: 0.7vw; margin-bottom: 2px; letter-spacing: 1px;}
-        .contact-name { color: var(--text-main); font-weight: 600; margin-bottom: 2px; font-size: 0.7vw; }
-        .contact-info strong { color: var(--blue); }
-
         /* --- TICKER SCORREVOLE CONTINUO (AEROPORTO) --- */
         .ticker {
             height: 50px;
@@ -430,14 +411,6 @@
             filter: contrast(1.1) brightness(1.05) grayscale(0.2) drop-shadow(0 15px 15px rgba(0,0,0,0.2));
             mix-blend-mode: normal; 
         }
-        
-        body.light-mode .contacts-box {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-        }
-        body.light-mode .contact-name {
-            color: var(--text-main);
-        }
 
         body.light-mode .ticker {
             background: #ffffff;
@@ -467,9 +440,12 @@
                 height: auto;
                 text-align: center;
             }
+            .header h1 {
+                font-size: 1rem;
+            }
             .dashboard { 
                 grid-template-columns: 1fr; 
-                padding: 20px; 
+                padding: 15px; 
                 gap: 20px;
                 overflow-y: visible;
             }
@@ -477,25 +453,22 @@
                 grid-template-columns: repeat(2, 1fr); 
             }
             .img-container { 
-                width: 50%; 
+                width: 45%; 
             }
             
+            /* Sostituzione unità 'vw' (desktop) con 'rem' per lettura da vicino */
             .sigla { font-size: 1.5rem; }
-            .modello { font-size: 0.8rem; }
-            .targa { font-size: 0.85rem; }
-            .badge { font-size: 0.7rem; }
-            .backup { font-size: 0.85rem; max-width: 55%; }
-            .backup strong { font-size: 0.95rem; }
-            .segnalazione { font-size: 0.75rem; max-width: 55%; }
+            .modello { font-size: 0.85rem; }
+            .targa { font-size: 0.9rem; }
+            .badge { font-size: 0.75rem; }
+            .backup { font-size: 0.9rem; max-width: 60%; }
+            .backup strong { font-size: 1rem; }
+            .segnalazione { font-size: 0.85rem; max-width: 60%; }
             
             .v-sigla { font-size: 1.1rem; }
-            .v-modello { font-size: 0.75rem; }
-            .v-status { font-size: 0.7rem; }
-            .v-segnalazione { font-size: 0.7rem; white-space: normal; }
-            
-            .contacts-box { font-size: 0.8rem; padding: 12px; }
-            .contact-role { font-size: 0.85rem; }
-            .contact-name { font-size: 0.8rem; }
+            .v-modello { font-size: 0.8rem; }
+            .v-status { font-size: 0.75rem; }
+            .v-segnalazione { font-size: 0.75rem; white-space: normal; }
 
             .ticker { font-size: 0.85rem; }
         }
@@ -524,7 +497,7 @@
         </div>
 
         <div class="col">
-            <div class="col-title">Somma L.do - Sumirago - Malpensa T1</div>
+            <div class="col-title">Somma L.do - Sumirago</div>
             <div id="slot-3"></div>
             <div id="slot-4"></div>
             <div id="slot-5"></div>
@@ -533,27 +506,16 @@
         <div class="col">
             <div class="col-title" style="color: var(--orange); --blue: var(--orange);">Disponibilità Flotta Variabile</div>
             <div id="slot-var" class="var-grid"></div>
-            
-            <div class="contacts-box">
-                <div class="contact-role">Responsabili Autoparco</div>
-                <div class="contact-name">Paracchini C. - Ghirardi D.</div>
-                <div class="contact-info">Cell: <strong>3387360099</strong></div>
-                <div class="contact-info">mail: <strong>responsabile.autoparco@crigallarate.org</strong></div>
-                
-                <div class="contact-role" style="margin-top: 10px;">Referente Patenti</div>
-                <div class="contact-name">Luongo A.F. <span style="font-weight: 400;">a.i.</span></div>
-                <div class="contact-info">mail: <strong>referente.patenti@crigallarate.org</strong></div>
-            </div>
         </div>
     </div>
 
     <div class="ticker">
         <div class="ticker-track">
             <div class="ticker-text">
-                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> 
+                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> • 
             </div>
             <div class="ticker-text">
-                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> 
+                MANDATORIO EFFETTUARE RIFORNIMENTO PRIMA DELLA METÀ SERBATOIO, VERIFICANDO IL TIPO DI CARBURANTE DEL MEZZO IN USO • PER OGNI NECESSITÀ RELATIVA AI MEZZI, CONTATTARE IL RESPONSABILE AUTOPARCO AL <strong>338.7360099</strong> • 
             </div>
         </div>
     </div>
