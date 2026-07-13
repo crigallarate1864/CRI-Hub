@@ -532,7 +532,7 @@
                     { id: "slot-1", m: findM("GALLARATE CONV 1"), b: findM("BACKUP CONV 1") },
                     { id: "slot-2", m: findM("GALLARATE CONV 2"), b: findM("BACKUP CONV 2") },
                     { id: "slot-3", m: findM("SOMMA LOMBARDO"),   b: findM("BACKUP CONV SOMMA L.DO") },
-                    { id: "slot-4", m: data.find(d => d[1]?.includes("VA11-81")), b: null },
+                    { id: "slot-4", m: data.find(d => d[1]?.includes("VA11-81") && ((d[4] || "").toUpperCase().includes("SUMIRAGO") || (!(d[4] || "").toUpperCase().includes("GALLARATE") && !(d[4] || "").toUpperCase().includes("SOMMA") && !(d[4] || "").toUpperCase().includes("MXP") && !(d[4] || "").toUpperCase().includes("CONV")))), b: null },
                     { id: "slot-5", m: findM("AGG. MXP"),           b: null }
                 ];
 
