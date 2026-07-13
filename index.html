@@ -14,7 +14,7 @@
             --border-color: #27272a;
             --border-light: rgba(255, 255, 255, 0.05);
             
-            /* Colori di Stato Semantici (No Neon) */
+            /* Colori di Stato Semantici */
             --accent: #3b82f6; /* Blue 500 */
             --green: #10b981; /* Emerald 500 */
             --orange: #f59e0b; /* Amber 500 */
@@ -25,7 +25,7 @@
             --text-muted: #a1a1aa; /* Zinc 400 */
             --text-dark: #09090b;
 
-            /* Spaziature standardizzate */
+            /* Spaziature standardizzate per grandi schermi */
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -69,7 +69,7 @@
 
         .header h1 { 
             font-weight: 800; 
-            font-size: clamp(1rem, 1.5vw, 1.25rem); 
+            font-size: clamp(1.2rem, 1.8vw, 1.5rem); 
             letter-spacing: 0.5px;
             color: var(--text-main);
             display: flex;
@@ -89,12 +89,12 @@
         .clock-wrapper { display: flex; align-items: center; gap: 20px; }
         
         .live-tag { 
-            font-size: 0.75rem; 
+            font-size: 0.8rem; 
             font-weight: 700; 
             color: var(--red); 
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.2); 
-            padding: 4px 12px; 
+            padding: 6px 14px; 
             border-radius: 20px;
             letter-spacing: 0.5px;
             text-transform: uppercase; 
@@ -105,8 +105,8 @@
 
         .live-tag::before {
             content: '';
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             background: var(--red);
             border-radius: 50%;
             animation: pulse-dot 2s infinite ease-in-out;
@@ -114,34 +114,34 @@
         
         #clock { 
             font-family: 'JetBrains Mono', monospace; 
-            font-weight: 500;
-            font-size: clamp(1.2rem, 2vw, 1.5rem); 
+            font-weight: 700;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem); 
             letter-spacing: -0.5px;
         }
 
-        /* --- DASHBOARD GRID --- */
+        /* --- DASHBOARD GRID (Spaziata per 48") --- */
         .dashboard {
             flex: 1;
             display: grid;
             grid-template-columns: 1fr 1fr 1.4fr;
-            gap: 32px;
-            padding: 32px 40px;
+            gap: 36px;
+            padding: 36px 40px;
             min-height: 0;
         }
 
-        .col { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+        .col { display: flex; flex-direction: column; gap: 20px; min-height: 0; }
         
         .col-title { 
-            font-size: 0.8rem; 
-            font-weight: 600; 
+            font-size: 0.9rem; 
+            font-weight: 700; 
             color: var(--text-muted); 
             text-transform: uppercase; 
             letter-spacing: 1px;
-            padding-bottom: 8px; 
+            padding-bottom: 10px; 
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         /* --- CARDS MEZZI --- */
@@ -149,9 +149,9 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 24px;
+            padding: 28px;
             position: relative;
-            min-height: 150px;
+            min-height: 180px; /* Aumentato per schermi grandi e per far respirare la foto */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -162,26 +162,27 @@
         .card:hover {
             transform: translateY(-2px);
             border-color: var(--text-muted);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
         }
 
-        /* Linea di stato laterale pulita */
+        /* Linea di stato laterale */
         .card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
             border-radius: var(--radius-lg) 0 0 var(--radius-lg);
         }
         .card.status-ok::before { background: var(--green); }
         .card.status-man::before { background: var(--orange); }
         .card.status-off::before { background: var(--red); }
-        .card.status-off { background: rgba(239, 68, 68, 0.03); }
+        .card.status-off { background: rgba(239, 68, 68, 0.04); }
 
         .sigla, .modello, .targa, .badge, .backup {
             position: relative;
             z-index: 5;
+            max-width: 55%; /* Evita che il testo finisca sopra l'immagine */
         }
 
         .sigla { 
-            font-size: clamp(1.4rem, 2vw, 2rem); 
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem); 
             font-weight: 800; 
             line-height: 1.1; 
             letter-spacing: -0.5px; 
@@ -189,9 +190,9 @@
         }
         
         .modello { 
-            font-size: 0.8rem; 
+            font-size: 0.9rem; 
             color: var(--text-muted); 
-            margin: 6px 0 12px 0; 
+            margin: 8px 0 14px 0; 
             text-transform: uppercase; 
             font-weight: 600; 
             letter-spacing: 0.5px; 
@@ -199,11 +200,11 @@
         
         .targa { 
             font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.85rem; 
+            font-size: 1rem; 
             font-weight: 700;
             color: var(--text-dark); 
             background: var(--text-main); 
-            padding: 4px 10px; 
+            padding: 6px 12px; 
             border-radius: var(--radius-sm); 
             display: inline-block; 
             width: fit-content; 
@@ -212,21 +213,21 @@
 
         .badge {
             align-self: flex-start;
-            margin-top: 16px;
-            padding: 4px 12px;
+            margin-top: 18px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border: 1px solid transparent;
         }
-        .badge-ok { background: rgba(16, 185, 129, 0.1); color: var(--green); border-color: rgba(16, 185, 129, 0.2); }
-        .badge-man { background: rgba(245, 158, 11, 0.1); color: var(--orange); border-color: rgba(245, 158, 11, 0.2); }
-        .badge-off { background: rgba(239, 68, 68, 0.1); color: var(--red); border-color: rgba(239, 68, 68, 0.2); }
+        .badge-ok { background: rgba(16, 185, 129, 0.15); color: var(--green); border-color: rgba(16, 185, 129, 0.3); }
+        .badge-man { background: rgba(245, 158, 11, 0.15); color: var(--orange); border-color: rgba(245, 158, 11, 0.3); }
+        .badge-off { background: rgba(239, 68, 68, 0.15); color: var(--red); border-color: rgba(239, 68, 68, 0.3); }
 
         .backup {
-            font-size: 0.8rem; 
+            font-size: 0.85rem; 
             color: var(--text-muted); 
             font-weight: 500; 
             margin-top: 16px; 
@@ -245,44 +246,47 @@
             border-radius: 4px;
         }
 
-        /* --- IMMAGINI --- */
+        /* --- IMMAGINI (A COLORI, VISIBILI E A DESTRA) --- */
         .img-container {
             position: absolute;
             top: 0; right: 0; bottom: 0;
-            width: 50%; 
+            width: 45%; /* Occupa strettamente la parte destra della card */
             z-index: 0; 
             pointer-events: none;
             display: flex;
             align-items: center; 
             justify-content: flex-end; 
+            padding-right: 15px; /* Margine dal bordo destro */
             overflow: hidden;
             border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-            mask-image: linear-gradient(to right, transparent 0%, black 70%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 70%);
+            /* Sfumatura dolce a sinistra per integrarsi con il fondo, mantenendo il veicolo nitido a destra */
+            mask-image: linear-gradient(to right, transparent 0%, black 30%, black 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%, black 100%);
         }
 
         .vehicle-img {
-            max-height: 100%; 
-            max-width: 120%;  
+            max-height: 85%; /* Lascia un po' di spazio sopra e sotto nella card */
+            max-width: 100%;  
             object-fit: contain; 
-            opacity: 0.15; /* Molto più sobria, effetto filigrana */
-            filter: grayscale(1);
-            transform: scaleX(-1) translateX(-10%); 
-            transition: opacity 0.3s ease, filter 0.3s ease;
+            object-position: right center; /* Assicura che l'auto stia schiacciata a destra */
+            opacity: 0.95; /* Altamente visibile */
+            filter: drop-shadow(-8px 12px 15px rgba(0,0,0,0.6)); /* Ombra per profondità */
+            transform: scaleX(-1); /* Gira l'auto per farla guardare idealmente verso il centro (se originariamente guardava a sinistra) */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
         }
         
         .card:hover .vehicle-img {
-            opacity: 0.25;
-            filter: grayscale(0.5);
+            opacity: 1;
+            transform: scaleX(-1) scale(1.05);
         }
 
         /* --- FLOTTA VARIABILE --- */
         .var-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 8px;
             align-content: start;
             flex: 1;
             min-height: 0;
@@ -292,7 +296,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            padding: 16px;
             position: relative;
             overflow: hidden;
             transition: transform 0.2s ease, border-color 0.2s ease;
@@ -306,38 +310,38 @@
         }
 
         .v-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
         }
         .v-card.ok::before { background: var(--green); }
         .v-card.man::before { background: var(--orange); }
         .v-card.off::before { background: var(--red); }
-        .v-card.off { background: rgba(239, 68, 68, 0.03); }
+        .v-card.off { background: rgba(239, 68, 68, 0.04); }
 
-        .v-sigla { font-size: 1rem; font-weight: 700; color: var(--text-main); display: block; letter-spacing: -0.5px; }
-        .v-modello { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin: 4px 0 10px 0; font-weight: 500;}
-        .v-status { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-top: auto; }
+        .v-sigla { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: block; letter-spacing: -0.5px; }
+        .v-modello { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; display: block; margin: 6px 0 12px 0; font-weight: 600;}
+        .v-status { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-top: auto; }
 
         /* --- TICKER SCORREVOLE CONTINUO --- */
         .ticker {
-            height: 48px;
+            height: 56px;
             background: var(--card-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             overflow: hidden; 
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: 500;
             position: relative;
             z-index: 10;
         }
         
         .ticker::after {
-            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 60px;
+            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 80px;
             background: linear-gradient(to right, var(--card-bg), transparent);
             z-index: 5;
         }
         .ticker::before {
-            content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 60px;
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 80px;
             background: linear-gradient(to left, var(--card-bg), transparent);
             z-index: 5;
         }
@@ -351,10 +355,11 @@
 
         .ticker-text { 
             white-space: nowrap; 
-            padding-right: 40px; 
+            padding-right: 50px; 
             color: var(--text-muted);
+            letter-spacing: 0.5px;
         }
-        .ticker-text strong { color: var(--text-main); font-weight: 700; }
+        .ticker-text strong { color: var(--text-main); font-weight: 800; }
 
         /* KEYFRAMES */
         @keyframes scroll-continuous { 
@@ -382,7 +387,7 @@
             --text-dark: #fafafa;
         }
 
-        body.light-mode .header { background: rgba(255, 255, 255, 0.9); }
+        body.light-mode .header { background: rgba(255, 255, 255, 0.95); }
         
         body.light-mode .targa {
             background: var(--text-main);
@@ -391,17 +396,13 @@
 
         body.light-mode .card.status-off,
         body.light-mode .v-card.off {
-            background: rgba(239, 68, 68, 0.03);
+            background: rgba(239, 68, 68, 0.04);
         }
 
+        /* In light mode l'immagine resta a colori e ad alta opacità */
         body.light-mode .vehicle-img {
-            opacity: 0.1; 
-            filter: grayscale(1);
-        }
-        
-        body.light-mode .card:hover .vehicle-img {
-            opacity: 0.15;
-            filter: grayscale(0.8);
+            opacity: 0.95; 
+            filter: drop-shadow(-8px 12px 15px rgba(0,0,0,0.15));
         }
 
         body.light-mode .backup strong {
@@ -414,12 +415,13 @@
         @media (max-width: 900px) {
             html, body { height: auto !important; min-height: 100vh; overflow-y: auto !important; overflow-x: hidden; }
             .header { padding: 16px 20px; flex-direction: column; gap: 12px; height: auto; text-align: center; }
-            .header h1 { justify-content: center; font-size: 1.1rem;}
+            .header h1 { justify-content: center; font-size: 1.2rem;}
             .dashboard { grid-template-columns: 1fr; padding: 20px; gap: 24px; }
-            .var-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); min-height: 200px; overflow: visible; }
+            .var-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); min-height: 250px; overflow: visible; }
             .img-container { width: 40%; }
-            .backup { max-width: 80%; }
-            .card { padding: 20px; }
+            .sigla, .modello, .targa, .badge, .backup { max-width: 60%; }
+            .backup { max-width: 100%; }
+            .card { padding: 20px; min-height: 150px; }
         }
     </style>
 </head>
