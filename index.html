@@ -264,7 +264,7 @@
             max-height: 110%; 
             max-width: 110%;  
             object-fit: contain; 
-            opacity: 0.5; /* <-- MODIFICATO: portato da 0.25 a 0.5 */
+            opacity: 0.5; 
             filter: contrast(1.2) brightness(1.3) grayscale(0.2) drop-shadow(0 20px 15px rgba(0,0,0,0.5));
             transform: scaleX(-1) translateX(-5%); 
             mix-blend-mode: screen;
@@ -280,6 +280,9 @@
             overflow-y: auto;
             padding-right: 6px;
             align-content: start;
+            /* Aggiunti per evitare collassi strutturali della grid interna */
+            flex: 1;
+            min-height: 0;
         }
 
         .v-card {
@@ -428,7 +431,7 @@
         }
 
         body.light-mode .vehicle-img {
-            opacity: 0.4; /* <-- MODIFICATO: portato da 0.15 a 0.4 */
+            opacity: 0.4; 
             filter: contrast(1) brightness(0.8) grayscale(0.5);
             mix-blend-mode: multiply; 
         }
@@ -446,10 +449,12 @@
         /* --- RESPONSIVE MOBILE (SMARTPHONE) --- */
         /* ========================================= */
         @media (max-width: 900px) {
-            body { 
-                height: auto; 
+            /* Fix globale di scroll su iOS/Mobile */
+            html, body { 
+                height: auto !important; 
                 min-height: 100vh; 
-                overflow-y: auto; 
+                overflow-y: auto !important; 
+                overflow-x: hidden;
             }
             .header { 
                 padding: 15px 20px; 
@@ -464,10 +469,12 @@
                 gap: 24px;
                 overflow-y: visible;
             }
-            /* Su mobile la variabile prende 2 o più colonne a seconda dello schermo */
+            /* Su mobile la variabile prende 2 o più colonne e scorre insieme alla pagina */
             .var-grid { 
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
-                max-height: 400px; /* Evita che diventi infinita su mobile */
+                max-height: none; /* Rimuove il blocco di altezza che faceva sparire il div */
+                overflow: visible; /* Forza la visualizzazione corretta su Safari Mobile */
+                min-height: 200px;
             }
             .img-container { width: 45%; }
             .backup { max-width: 70%; }
