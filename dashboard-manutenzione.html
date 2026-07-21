@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DASHBOARD OFFICINA - Fuori Servizio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -98,7 +99,6 @@
         .col-manutenzione { border-top: 5px solid var(--orange); }
         .col-fuori-servizio { border-top: 5px solid var(--red); }
 
-        /* Gruppo Titolo + Sottotitolo */
         .col-header-group {
             text-align: center;
             padding-bottom: 20px;
@@ -159,147 +159,165 @@
         .v-card.status-off { border-left: 4px solid var(--red); background: rgba(239, 68, 68, 0.05); }
 
         /* ========================================= */
-        /* MOTORE 3D IN CSS PURO */
+        /* LA NUOVA AMBULANZA 2D (Profilo Laterale) */
         /* ========================================= */
 
-        /* Contenitore con Prospettiva 3D */
-        .scene-3d {
+        .anim-box {
             position: relative;
-            width: 120px;
-            height: 100px;
-            perspective: 600px; /* Attiva lo spazio 3D */
-            transform-style: preserve-3d;
+            width: 140px;
+            height: 90px;
             background: rgba(255,255,255,0.02);
             border-radius: var(--radius-sm);
             flex-shrink: 0;
             border-bottom: 2px solid var(--border-color); /* Pavimento garage */
         }
 
-        /* 1. L'AMBULANZA (Struttura Base) */
         .css-amb {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            margin-left: -35px;
-            width: 70px;
-            height: 60px;
+            position: absolute; 
+            bottom: 8px; /* Poggia perfettamente a terra grazie alle ruote */
+            left: 10px;
+            width: 100px; 
+            height: 55px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            transition: all 0.3s;
+        }
+
+        /* Modulo Sanitario (Parte posteriore quadrata) */
+        .amb-box {
+            position: absolute; bottom: 0; left: 0;
+            width: 65px; height: 55px; 
             background: #f8fafc;
-            border-radius: 8px 8px 4px 4px;
-            transform: translateZ(-20px); /* Spinta indietro nello spazio 3D */
-            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        /* Cabina Guida (Parte anteriore inclinata) */
+        .amb-cabin {
+            position: absolute; bottom: 0; left: 65px;
+            width: 35px; height: 45px; 
+            background: #f8fafc;
+            border-radius: 0 10px 0 0;
         }
 
-        .amb-windshield {
-            position: absolute;
-            top: 6px; left: 6px; right: 6px; height: 18px;
+        /* Croce Rossa */
+        .amb-cross {
+            position: absolute; top: 12px; left: 24px; width: 16px; height: 16px;
+        }
+        .amb-cross::before { content:''; position:absolute; top:0; left:5px; width:6px; height:16px; background:var(--red); border-radius: 1px;}
+        .amb-cross::after { content:''; position:absolute; top:5px; left:0; width:16px; height:6px; background:var(--red); border-radius: 1px;}
+
+        /* Striscia Rossa laterale */
+        .amb-stripe {
+            position: absolute; bottom: 12px; left: 0; width: 100px; height: 4px; background: var(--red); z-index: 5;
+        }
+
+        /* Parabrezza / Finestrino */
+        .amb-window {
+            position: absolute; top: 4px; right: 4px;
+            width: 16px; height: 18px;
             background: #0f172a;
-            border-radius: 4px 4px 0 0;
-            border: 2px solid #cbd5e1;
+            border-radius: 0 8px 0 0;
+            border-left: 2px solid #cbd5e1;
         }
 
-        /* Il vano motore nero (visibile quando il cofano si alza) */
-        .amb-engine-bay {
-            position: absolute;
-            bottom: 8px; left: 6px; right: 6px; height: 22px;
+        /* Vano Motore (Oscurato) */
+        .amb-engine {
+            position: absolute; bottom: 0; right: 0;
+            width: 16px; height: 20px;
             background: #1e293b;
-            border-radius: 2px;
-            overflow: hidden;
+            border-radius: 0 4px 0 0;
         }
 
-        /* IL COFANO (Magia 3D: ruota su se stesso) */
+        /* IL COFANO CHE SI APRE */
         .amb-hood {
-            position: absolute;
-            bottom: 8px; left: 6px; right: 6px; height: 24px;
-            background: #f1f5f9;
-            border-top: 1px solid #cbd5e1;
-            transform-origin: top center; /* Il cardine è in alto vicino al vetro */
-            transform: rotateX(75deg); /* LO ALZA IN 3D! */
-            box-shadow: 0 10px 10px rgba(0,0,0,0.3);
-            z-index: 10;
+            position: absolute; bottom: 18px; right: -2px;
+            width: 20px; height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            transform-origin: 0% 50%; /* Cardine vicino al parabrezza */
+            z-index: 6;
+            transition: transform 0.4s ease-out;
         }
 
-        /* Fari */
-        .amb-lights {
+        /* Selezionando questo apre il cofano */
+        .is-broken .amb-hood {
+            transform: rotate(-60deg);
+        }
+
+        /* Ruote */
+        .amb-wheel {
+            position: absolute; bottom: -8px; width: 20px; height: 20px;
+            background: #1e293b; border: 4px solid #cbd5e1; border-radius: 50%; z-index: 3;
+        }
+        .w-back { left: 10px; }
+        .w-front { left: 70px; }
+
+        /* Scintille nel motore */
+        .spark { position: absolute; width: 4px; height: 4px; background: #fbbf24; border-radius: 50%; }
+        .s1 { top: 4px; left: 4px; animation: spark-anim 0.6s infinite; }
+        .s2 { top: 8px; left: 8px; animation: spark-anim 0.8s infinite 0.2s; }
+        
+        @keyframes spark-anim {
+            0% { opacity: 1; transform: translate(0,0) scale(1); }
+            100% { opacity: 0; transform: translate(-8px,-12px) scale(0); }
+        }
+
+        /* ========================================= */
+        /* IL MECCANICO AL LAVORO */
+        /* ========================================= */
+        .mechanic {
             position: absolute;
-            bottom: 10px; width: 100%; display: flex; justify-content: space-between; padding: 0 10px;
+            bottom: 0px; right: 10px; /* In piedi davanti all'ambulanza */
+            display: flex; flex-direction: column; align-items: center;
             z-index: 5;
         }
-        .amb-light { width: 12px; height: 6px; background: #fbbf24; border-radius: 2px; box-shadow: 0 0 5px #fbbf24; }
-
-        /* Scintille animate nel motore */
-        .spark { position: absolute; background: #fef08a; width: 4px; height: 4px; border-radius: 50%; z-index: 15; }
-        .s1 { left: 30px; top: 10px; animation: spark1 0.7s infinite ease-out; }
-        .s2 { left: 45px; top: 15px; animation: spark2 1s infinite ease-out; }
+        .mec-head { width: 14px; height: 14px; background: #fca5a5; border-radius: 50%; z-index: 2;}
+        .mec-body { width: 16px; height: 22px; background: var(--orange); border-radius: 6px 6px 0 0; margin-top: -2px; z-index: 1;}
         
-        @keyframes spark1 { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(-15px,-25px) scale(0); opacity: 0; } }
-        @keyframes spark2 { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(15px,-20px) scale(0); opacity: 0; } }
-
-        /* 2. IL MECCANICO (Davanti al veicolo, mani nel motore) */
-        .css-mechanic {
-            position: absolute;
-            bottom: 10px; left: 50%;
-            margin-left: -13px; /* Centro esatto */
-            z-index: 20; /* Si trova davanti all'ambulanza */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: translateZ(10px) rotateX(-10deg); /* Inclinato in avanti verso il motore */
-        }
-        .mech-head {
-            width: 16px; height: 16px; background: #fca5a5; border-radius: 50%;
-            z-index: 2; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
-        }
-        .mech-body {
-            width: 26px; height: 28px; background: var(--orange);
-            border-radius: 8px 8px 2px 2px; margin-top: -3px; z-index: 1;
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.3);
-        }
-        .mech-arms {
-            position: absolute; top: 14px; width: 36px; display: flex; justify-content: space-between; left: -5px;
-        }
-        .mech-arm {
-            width: 8px; height: 24px; background: var(--orange);
-            border-radius: 4px; transform-origin: top center;
+        /* Braccio che entra nel motore */
+        .mec-arm {
+            position: absolute; top: 12px; left: -8px;
+            width: 14px; height: 6px; background: var(--orange);
+            border-radius: 3px;
+            transform-origin: 100% 50%; /* La spalla è a destra */
+            animation: repair 0.4s infinite alternate ease-in-out;
+            z-index: 3;
         }
         
-        /* Movimento frenetico delle braccia "dentro" il motore */
-        .arm-l { animation: lavora-sx 0.4s infinite alternate ease-in-out; }
-        .arm-r { animation: lavora-dx 0.5s infinite alternate ease-in-out; }
+        /* Chiave inglese in mano */
+        .mec-arm::after {
+            content: '\f0ad'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; left: -10px; top: -5px; color: #a1a1aa; font-size: 14px;
+            transform: rotate(-45deg);
+        }
 
-        @keyframes lavora-sx { 0% { transform: rotate(15deg) translateY(0); } 100% { transform: rotate(40deg) translateY(-12px); } }
-        @keyframes lavora-dx { 0% { transform: rotate(-15deg) translateY(0); } 100% { transform: rotate(-45deg) translateY(-10px); } }
-
+        @keyframes repair {
+            0% { transform: rotate(10deg); }
+            100% { transform: rotate(-25deg); }
+        }
 
         /* ========================================= */
-        /* STILI PER "FUORI SERVIZIO" (Cofano chiuso + Semaforo 3D) */
+        /* FUORI SERVIZIO (Ambulanza ferma + Semaforo)*/
         /* ========================================= */
+        
+        /* Oscuramento veicolo fermo */
+        .dark-amb { filter: grayscale(0.6) brightness(0.5); }
+        .dark-amb .amb-hood { transform: rotate(0deg); } /* Cofano rigorosamente chiuso */
 
-        /* Ambulanza spenta */
-        .dark-amb { background: #334155; transform: translateZ(-30px); opacity: 0.6; }
-        .dark-amb .amb-windshield { border-color: #475569; }
-        .dark-amb .amb-hood { transform: rotateX(0deg); background: #334155; border-top: 1px solid #475569; box-shadow: none; } /* COFANO CHIUSO */
-        .dark-amb .amb-light { background: #1e293b; box-shadow: none; }
-
-        /* Semaforo in Prospettiva */
-        .tl-3d {
-            position: absolute;
-            right: 15px; bottom: 10px;
-            transform: translateZ(20px) rotateY(-30deg); /* Ruotato verso l'utente in 3D */
-            display: flex; flex-direction: column; align-items: center;
-            z-index: 25;
+        .semaforo-wrap {
+            position: absolute; bottom: 0; right: 15px;
+            display: flex; flex-direction: column; align-items: center; z-index: 10;
         }
-        .tl-pole-3d { width: 6px; height: 30px; background: #27272a; }
-        .tl-box-3d {
-            width: 26px; height: 60px; background: #09090b; border: 2px solid #27272a;
-            border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
-            box-shadow: 8px 8px 15px rgba(0,0,0,0.6), inset -2px -2px 5px rgba(255,255,255,0.1);
+        .semaforo-box {
+            width: 18px; height: 42px; background: #09090b; border: 2px solid #27272a; border-radius: 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
         }
-        .tl-light-3d { width: 12px; height: 12px; border-radius: 50%; background: #18181b; }
-        .tl-light-3d.red { animation: flash-red-3d 1s infinite; }
-
-        @keyframes flash-red-3d {
-            0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red), 0 0 20px var(--red); }
+        .semaforo-palo { width: 4px; height: 15px; background: #27272a; }
+        
+        .semaforo-luce { width: 10px; height: 10px; border-radius: 50%; background: #18181b; }
+        .semaforo-luce.red { animation: flash-red-2d 1s infinite; }
+        
+        @keyframes flash-red-2d {
+            0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red); }
             50%, 100% { background: #18181b; box-shadow: none; }
         }
 
@@ -320,12 +338,12 @@
         body.light-mode { --bg-base: #f4f4f5; --card-bg: #ffffff; --border-color: #e4e4e7; --text-main: #09090b; --text-muted: #71717a; --text-dark: #fafafa; }
         body.light-mode .header { background: rgba(255, 255, 255, 0.95); }
         body.light-mode .v-card.status-off { background: rgba(239, 68, 68, 0.05); }
-        body.light-mode .scene-3d { background: rgba(0,0,0,0.02); border-color: #d4d4d8; }
-        body.light-mode .tl-pole-3d { background: #52525b; }
-        body.light-mode .tl-box-3d { background: #3f3f46; border-color: #27272a; }
-        body.light-mode .tl-light-3d { background: #71717a; }
-        @keyframes flash-red-3d-light { 0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red), 0 0 20px var(--red); } 50%, 100% { background: #71717a; box-shadow: none; } }
-        body.light-mode .tl-light-3d.red { animation: flash-red-3d-light 1s infinite; }
+        body.light-mode .anim-box { background: rgba(0,0,0,0.02); border-color: #d4d4d8; }
+        body.light-mode .semaforo-palo { background: #52525b; }
+        body.light-mode .semaforo-box { background: #3f3f46; border-color: #27272a; }
+        body.light-mode .semaforo-luce { background: #71717a; }
+        @keyframes flash-red-2d-light { 0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red); } 50%, 100% { background: #71717a; box-shadow: none; } }
+        body.light-mode .semaforo-luce.red { animation: flash-red-2d-light 1s infinite; }
 
     </style>
 </head>
@@ -389,32 +407,34 @@
 
                     if (!sigla) return;
 
-                    // HTML MANUTENZIONE: Ambulanza con cofano aperto + Meccanico
+                    // HTML MANUTENZIONE: Ambulanza laterale + Cofano Aperto + Meccanico
                     if (status.includes("MANUTENZIONE")) {
                         countMan++;
                         gridMan.innerHTML += `
                             <div class="v-card status-man">
-                                <div class="scene-3d">
-                                    <div class="css-amb">
-                                        <div class="amb-windshield"></div>
-                                        <div class="amb-engine-bay">
-                                            <div class="spark s1"></div>
-                                            <div class="spark s2"></div>
+                                <div class="anim-box">
+                                    
+                                    <div class="css-amb is-broken">
+                                        <div class="amb-box"><div class="amb-cross"></div></div>
+                                        <div class="amb-cabin">
+                                            <div class="amb-window"></div>
+                                            <div class="amb-engine">
+                                                <div class="spark s1"></div>
+                                                <div class="spark s2"></div>
+                                            </div>
+                                            <div class="amb-hood"></div>
                                         </div>
-                                        <div class="amb-hood"></div> <!-- Cofano che si apre in 3D -->
-                                        <div class="amb-lights">
-                                            <div class="amb-light"></div>
-                                            <div class="amb-light"></div>
-                                        </div>
+                                        <div class="amb-stripe"></div>
+                                        <div class="amb-wheel w-back"></div>
+                                        <div class="amb-wheel w-front"></div>
                                     </div>
-                                    <div class="css-mechanic">
-                                        <div class="mech-head"></div>
-                                        <div class="mech-arms">
-                                            <div class="mech-arm arm-l"></div>
-                                            <div class="mech-arm arm-r"></div>
-                                        </div>
-                                        <div class="mech-body"></div>
+                                    
+                                    <div class="mechanic">
+                                        <div class="mec-head"></div>
+                                        <div class="mec-arm"></div>
+                                        <div class="mec-body"></div>
                                     </div>
+
                                 </div>
                                 <div class="v-info">
                                     <div class="v-sigla">${sigla}</div>
@@ -425,29 +445,33 @@
                         `;
                     }
                     
-                    // HTML FUORI SERVIZIO: Ambulanza chiusa/spenta + Semaforo 3D
+                    // HTML FUORI SERVIZIO: Ambulanza ferma/spenta + Semaforo a palo
                     if (status.includes("FUORI SERVIZIO")) {
                         countOff++;
                         gridOff.innerHTML += `
                             <div class="v-card status-off">
-                                <div class="scene-3d">
+                                <div class="anim-box">
+                                    
                                     <div class="css-amb dark-amb">
-                                        <div class="amb-windshield"></div>
-                                        <div class="amb-engine-bay"></div>
-                                        <div class="amb-hood"></div> <!-- Cofano chiuso -->
-                                        <div class="amb-lights">
-                                            <div class="amb-light"></div>
-                                            <div class="amb-light"></div>
+                                        <div class="amb-box"><div class="amb-cross"></div></div>
+                                        <div class="amb-cabin">
+                                            <div class="amb-window"></div>
+                                            <div class="amb-engine"></div>
+                                            <div class="amb-hood"></div>
                                         </div>
+                                        <div class="amb-stripe"></div>
+                                        <div class="amb-wheel w-back"></div>
+                                        <div class="amb-wheel w-front"></div>
                                     </div>
-                                    <div class="tl-3d">
-                                        <div class="tl-box-3d">
-                                            <div class="tl-light-3d red"></div>
-                                            <div class="tl-light-3d"></div>
-                                            <div class="tl-light-3d"></div>
+                                    
+                                    <div class="semaforo-wrap">
+                                        <div class="semaforo-box">
+                                            <div class="semaforo-luce red"></div>
+                                            <div class="semaforo-luce"></div>
                                         </div>
-                                        <div class="tl-pole-3d"></div>
+                                        <div class="semaforo-palo"></div>
                                     </div>
+
                                 </div>
                                 <div class="v-info">
                                     <div class="v-sigla">${sigla}</div>
