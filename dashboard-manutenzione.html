@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DASHBOARD OFFICINA - Fuori Servizio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome per le icone animate -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -157,215 +156,176 @@
         }
 
         .v-card.status-man { border-left: 4px solid var(--orange); }
-        .v-card.status-off { 
-            border-left: 4px solid var(--red); 
-            background: rgba(239, 68, 68, 0.05); 
-        }
+        .v-card.status-off { border-left: 4px solid var(--red); background: rgba(239, 68, 68, 0.05); }
 
-        /* --- CONTENITORE ANIMAZIONI --- */
-        .anim-box {
+        /* ========================================= */
+        /* MOTORE 3D IN CSS PURO */
+        /* ========================================= */
+
+        /* Contenitore con Prospettiva 3D */
+        .scene-3d {
             position: relative;
             width: 120px;
-            height: 90px;
-            display: flex;
+            height: 100px;
+            perspective: 600px; /* Attiva lo spazio 3D */
+            transform-style: preserve-3d;
             background: rgba(255,255,255,0.02);
             border-radius: var(--radius-sm);
             flex-shrink: 0;
-            border-bottom: 2px solid var(--border-color); /* Pavimento */
+            border-bottom: 2px solid var(--border-color); /* Pavimento garage */
         }
 
-        /* ========================================= */
-        /* 1. ANIMAZIONE PONTE SOLLEVATORE & MECCANICO */
-        /* ========================================= */
-
-        .ponte-colonna {
+        /* 1. L'AMBULANZA (Struttura Base) */
+        .css-amb {
             position: absolute;
-            bottom: 0;
-            width: 10px;
-            height: 70px;
-            background: #475569;
-            border-radius: 2px 2px 0 0;
-        }
-        .ponte-colonna.sx { left: 20px; }
-        .ponte-colonna.dx { right: 20px; }
-
-        .ponte-piattaforma {
-            position: absolute;
-            bottom: 50px;
-            left: 10px;
-            width: 100px;
-            height: 6px;
-            background: var(--orange);
-            border-radius: 3px;
-        }
-
-        .ambulanza-man {
-            position: absolute;
-            bottom: 56px;
+            bottom: 10px;
             left: 50%;
-            transform: translateX(-50%);
-            font-size: 2.8rem;
-            color: var(--text-main);
+            margin-left: -35px;
+            width: 70px;
+            height: 60px;
+            background: #f8fafc;
+            border-radius: 8px 8px 4px 4px;
+            transform: translateZ(-20px); /* Spinta indietro nello spazio 3D */
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .amb-windshield {
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; height: 18px;
+            background: #0f172a;
+            border-radius: 4px 4px 0 0;
+            border: 2px solid #cbd5e1;
+        }
+
+        /* Il vano motore nero (visibile quando il cofano si alza) */
+        .amb-engine-bay {
+            position: absolute;
+            bottom: 8px; left: 6px; right: 6px; height: 22px;
+            background: #1e293b;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        /* IL COFANO (Magia 3D: ruota su se stesso) */
+        .amb-hood {
+            position: absolute;
+            bottom: 8px; left: 6px; right: 6px; height: 24px;
+            background: #f1f5f9;
+            border-top: 1px solid #cbd5e1;
+            transform-origin: top center; /* Il cardine è in alto vicino al vetro */
+            transform: rotateX(75deg); /* LO ALZA IN 3D! */
+            box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        /* Fari */
+        .amb-lights {
+            position: absolute;
+            bottom: 10px; width: 100%; display: flex; justify-content: space-between; padding: 0 10px;
             z-index: 5;
         }
+        .amb-light { width: 12px; height: 6px; background: #fbbf24; border-radius: 2px; box-shadow: 0 0 5px #fbbf24; }
 
-        .omino-sotto {
+        /* Scintille animate nel motore */
+        .spark { position: absolute; background: #fef08a; width: 4px; height: 4px; border-radius: 50%; z-index: 15; }
+        .s1 { left: 30px; top: 10px; animation: spark1 0.7s infinite ease-out; }
+        .s2 { left: 45px; top: 15px; animation: spark2 1s infinite ease-out; }
+        
+        @keyframes spark1 { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(-15px,-25px) scale(0); opacity: 0; } }
+        @keyframes spark2 { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(15px,-20px) scale(0); opacity: 0; } }
+
+        /* 2. IL MECCANICO (Davanti al veicolo, mani nel motore) */
+        .css-mechanic {
             position: absolute;
-            bottom: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 4;
-            animation: scivola-carrello 4s infinite alternate ease-in-out;
-        }
-
-        .carrellino {
-            position: absolute;
-            bottom: 0;
-            width: 34px;
-            height: 4px;
-            background: #ef4444;
-            border-radius: 2px;
-        }
-        .carrellino::before, .carrellino::after {
-            content: ''; position: absolute; bottom: -2px; width: 6px; height: 6px; background: #000; border-radius: 50%;
-        }
-        .carrellino::before { left: 2px; }
-        .carrellino::after { right: 2px; }
-
-        .omino-corpo {
-            font-size: 1.6rem;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
-
-        .omino-braccio {
-            position: absolute;
-            top: -12px;
-            right: -8px;
-            font-size: 1.2rem;
-            color: var(--text-main);
-            transform-origin: bottom left;
-            animation: avvita-bullone 1.5s infinite alternate ease-in-out;
-        }
-
-        @keyframes scivola-carrello {
-            0% { transform: translateX(-80%); }
-            100% { transform: translateX(10%); }
-        }
-
-        @keyframes avvita-bullone {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-35deg); }
-        }
-
-        /* ========================================= */
-        /* 2. ANIMAZIONE SEMAFORO NETTO (Fuori Servizio)*/
-        /* ========================================= */
-
-        .ambulanza-off {
-            position: absolute;
-            bottom: 0;
-            left: 10px;
-            font-size: 3rem;
-            color: var(--text-muted);
-            opacity: 0.3;
-            z-index: 1;
-        }
-
-        .semaforo-palo {
-            position: absolute;
-            right: 25px;
-            bottom: 0;
-            width: 6px;
-            height: 60px;
-            background: #27272a;
-            z-index: 2;
-        }
-
-        .semaforo-corpo {
-            position: absolute;
-            right: 17px;
-            bottom: 30px;
-            width: 22px;
-            height: 52px;
-            background: #09090b;
-            border-radius: 4px;
+            bottom: 10px; left: 50%;
+            margin-left: -13px; /* Centro esatto */
+            z-index: 20; /* Si trova davanti all'ambulanza */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            border: 2px solid #27272a;
-            z-index: 3;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            transform: translateZ(10px) rotateX(-10deg); /* Inclinato in avanti verso il motore */
         }
-
-        .luce {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #18181b;
+        .mech-head {
+            width: 16px; height: 16px; background: #fca5a5; border-radius: 50%;
+            z-index: 2; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
         }
-
-        .luce.red {
-            animation: lampeggio-netto 1s infinite;
+        .mech-body {
+            width: 26px; height: 28px; background: var(--orange);
+            border-radius: 8px 8px 2px 2px; margin-top: -3px; z-index: 1;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.3);
         }
+        .mech-arms {
+            position: absolute; top: 14px; width: 36px; display: flex; justify-content: space-between; left: -5px;
+        }
+        .mech-arm {
+            width: 8px; height: 24px; background: var(--orange);
+            border-radius: 4px; transform-origin: top center;
+        }
+        
+        /* Movimento frenetico delle braccia "dentro" il motore */
+        .arm-l { animation: lavora-sx 0.4s infinite alternate ease-in-out; }
+        .arm-r { animation: lavora-dx 0.5s infinite alternate ease-in-out; }
 
-        @keyframes lampeggio-netto {
-            0%, 49% { background: var(--red); box-shadow: 0 0 8px var(--red), 0 0 16px var(--red); }
+        @keyframes lavora-sx { 0% { transform: rotate(15deg) translateY(0); } 100% { transform: rotate(40deg) translateY(-12px); } }
+        @keyframes lavora-dx { 0% { transform: rotate(-15deg) translateY(0); } 100% { transform: rotate(-45deg) translateY(-10px); } }
+
+
+        /* ========================================= */
+        /* STILI PER "FUORI SERVIZIO" (Cofano chiuso + Semaforo 3D) */
+        /* ========================================= */
+
+        /* Ambulanza spenta */
+        .dark-amb { background: #334155; transform: translateZ(-30px); opacity: 0.6; }
+        .dark-amb .amb-windshield { border-color: #475569; }
+        .dark-amb .amb-hood { transform: rotateX(0deg); background: #334155; border-top: 1px solid #475569; box-shadow: none; } /* COFANO CHIUSO */
+        .dark-amb .amb-light { background: #1e293b; box-shadow: none; }
+
+        /* Semaforo in Prospettiva */
+        .tl-3d {
+            position: absolute;
+            right: 15px; bottom: 10px;
+            transform: translateZ(20px) rotateY(-30deg); /* Ruotato verso l'utente in 3D */
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 25;
+        }
+        .tl-pole-3d { width: 6px; height: 30px; background: #27272a; }
+        .tl-box-3d {
+            width: 26px; height: 60px; background: #09090b; border: 2px solid #27272a;
+            border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
+            box-shadow: 8px 8px 15px rgba(0,0,0,0.6), inset -2px -2px 5px rgba(255,255,255,0.1);
+        }
+        .tl-light-3d { width: 12px; height: 12px; border-radius: 50%; background: #18181b; }
+        .tl-light-3d.red { animation: flash-red-3d 1s infinite; }
+
+        @keyframes flash-red-3d {
+            0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red), 0 0 20px var(--red); }
             50%, 100% { background: #18181b; box-shadow: none; }
         }
 
-        /* Info Mezzo */
+        /* --- TESTI INFO --- */
         .v-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .v-sigla { font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
         .v-modello { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;}
         .v-targa { 
             font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.9rem; 
-            font-weight: 700;
-            color: var(--text-dark); 
-            background: var(--text-main); 
-            padding: 4px 10px; 
-            border-radius: var(--radius-sm); 
-            width: fit-content; 
-            margin-top: 6px;
+            font-size: 0.9rem; font-weight: 700; color: var(--text-dark); 
+            background: var(--text-main); padding: 4px 10px; border-radius: var(--radius-sm); 
+            width: fit-content; margin-top: 6px;
         }
 
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            font-style: italic;
-        }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.2rem; font-style: italic; }
 
         /* --- AUTO LIGHT MODE --- */
-        body.light-mode {
-            --bg-base: #f4f4f5;
-            --card-bg: #ffffff;
-            --border-color: #e4e4e7;
-            --text-main: #09090b;
-            --text-muted: #71717a;
-            --text-dark: #fafafa;
-        }
+        body.light-mode { --bg-base: #f4f4f5; --card-bg: #ffffff; --border-color: #e4e4e7; --text-main: #09090b; --text-muted: #71717a; --text-dark: #fafafa; }
         body.light-mode .header { background: rgba(255, 255, 255, 0.95); }
         body.light-mode .v-card.status-off { background: rgba(239, 68, 68, 0.05); }
-        body.light-mode .anim-box { background: rgba(0,0,0,0.02); border-color: #d4d4d8; }
-        
-        body.light-mode .ponte-colonna { background: #94a3b8; }
-        body.light-mode .semaforo-palo { background: #52525b; }
-        body.light-mode .semaforo-corpo { background: #3f3f46; border-color: #27272a; }
-        body.light-mode .luce { background: #71717a; }
-        
-        @keyframes lampeggio-netto-light {
-            0%, 49% { background: var(--red); box-shadow: 0 0 8px var(--red), 0 0 16px var(--red); }
-            50%, 100% { background: #71717a; box-shadow: none; }
-        }
-        body.light-mode .luce.red { animation: lampeggio-netto-light 1s infinite; }
+        body.light-mode .scene-3d { background: rgba(0,0,0,0.02); border-color: #d4d4d8; }
+        body.light-mode .tl-pole-3d { background: #52525b; }
+        body.light-mode .tl-box-3d { background: #3f3f46; border-color: #27272a; }
+        body.light-mode .tl-light-3d { background: #71717a; }
+        @keyframes flash-red-3d-light { 0%, 49% { background: var(--red); box-shadow: 0 0 10px var(--red), 0 0 20px var(--red); } 50%, 100% { background: #71717a; box-shadow: none; } }
+        body.light-mode .tl-light-3d.red { animation: flash-red-3d-light 1s infinite; }
 
     </style>
 </head>
@@ -383,9 +343,7 @@
                 <div class="col-header">In Manutenzione</div>
                 <div class="col-subheader">Mezzo presso officina meccanica autorizzata, allestitore o elettrauto</div>
             </div>
-            <div class="vehicle-grid" id="grid-manutenzione">
-                <!-- Generato da JS -->
-            </div>
+            <div class="vehicle-grid" id="grid-manutenzione"></div>
         </div>
 
         <!-- Colonna Fuori Servizio -->
@@ -394,9 +352,7 @@
                 <div class="col-header">Fuori Servizio</div>
                 <div class="col-subheader">Mezzo presente in autoparco o distaccamento, non utilizzabile</div>
             </div>
-            <div class="vehicle-grid" id="grid-fuori-servizio">
-                <!-- Generato da JS -->
-            </div>
+            <div class="vehicle-grid" id="grid-fuori-servizio"></div>
         </div>
     </div>
 
@@ -405,18 +361,12 @@
 
         async function update() {
             try {
-                // Tema chiaro/scuro in base all'orario
                 const currentHour = new Date().getHours();
-                if (currentHour >= 8 && currentHour < 18) {
-                    document.body.classList.add('light-mode');
-                } else {
-                    document.body.classList.remove('light-mode');
-                }
+                if (currentHour >= 8 && currentHour < 18) document.body.classList.add('light-mode');
+                else document.body.classList.remove('light-mode');
 
-                // Orologio
                 document.getElementById('clock').innerText = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 
-                // Fetch Dati
                 const res = await fetch(sheetUrl + '&t=' + Date.now());
                 const csv = await res.text();
                 const sep = csv.includes(';') ? ';' : ',';
@@ -429,8 +379,7 @@
                 gridMan.innerHTML = '';
                 gridOff.innerHTML = '';
 
-                let countMan = 0;
-                let countOff = 0;
+                let countMan = 0; let countOff = 0;
 
                 data.forEach(d => {
                     const sigla = d[1];
@@ -440,25 +389,31 @@
 
                     if (!sigla) return;
 
-                    // Creazione HTML per MANUTENZIONE (Ponte Sollevatore)
+                    // HTML MANUTENZIONE: Ambulanza con cofano aperto + Meccanico
                     if (status.includes("MANUTENZIONE")) {
                         countMan++;
                         gridMan.innerHTML += `
                             <div class="v-card status-man">
-                                <div class="anim-box">
-                                    <!-- Il Ponte Idraulico -->
-                                    <div class="ponte-colonna sx"></div>
-                                    <div class="ponte-colonna dx"></div>
-                                    <div class="ponte-piattaforma"></div>
-                                    
-                                    <!-- L'ambulanza sollevata -->
-                                    <i class="fa-solid fa-truck-medical ambulanza-man"></i>
-                                    
-                                    <!-- L'omino sul carrellino sotto il ponte -->
-                                    <div class="omino-sotto">
-                                        <div class="carrellino"></div>
-                                        <i class="fa-solid fa-person omino-corpo"></i>
-                                        <i class="fa-solid fa-wrench omino-braccio"></i>
+                                <div class="scene-3d">
+                                    <div class="css-amb">
+                                        <div class="amb-windshield"></div>
+                                        <div class="amb-engine-bay">
+                                            <div class="spark s1"></div>
+                                            <div class="spark s2"></div>
+                                        </div>
+                                        <div class="amb-hood"></div> <!-- Cofano che si apre in 3D -->
+                                        <div class="amb-lights">
+                                            <div class="amb-light"></div>
+                                            <div class="amb-light"></div>
+                                        </div>
+                                    </div>
+                                    <div class="css-mechanic">
+                                        <div class="mech-head"></div>
+                                        <div class="mech-arms">
+                                            <div class="mech-arm arm-l"></div>
+                                            <div class="mech-arm arm-r"></div>
+                                        </div>
+                                        <div class="mech-body"></div>
                                     </div>
                                 </div>
                                 <div class="v-info">
@@ -470,18 +425,28 @@
                         `;
                     }
                     
-                    // Creazione HTML per FUORI SERVIZIO (Semaforo)
+                    // HTML FUORI SERVIZIO: Ambulanza chiusa/spenta + Semaforo 3D
                     if (status.includes("FUORI SERVIZIO")) {
                         countOff++;
                         gridOff.innerHTML += `
                             <div class="v-card status-off">
-                                <div class="anim-box">
-                                    <i class="fa-solid fa-truck-medical ambulanza-off"></i>
-                                    <div class="semaforo-palo"></div>
-                                    <div class="semaforo-corpo">
-                                        <div class="luce red"></div>
-                                        <div class="luce"></div>
-                                        <div class="luce"></div>
+                                <div class="scene-3d">
+                                    <div class="css-amb dark-amb">
+                                        <div class="amb-windshield"></div>
+                                        <div class="amb-engine-bay"></div>
+                                        <div class="amb-hood"></div> <!-- Cofano chiuso -->
+                                        <div class="amb-lights">
+                                            <div class="amb-light"></div>
+                                            <div class="amb-light"></div>
+                                        </div>
+                                    </div>
+                                    <div class="tl-3d">
+                                        <div class="tl-box-3d">
+                                            <div class="tl-light-3d red"></div>
+                                            <div class="tl-light-3d"></div>
+                                            <div class="tl-light-3d"></div>
+                                        </div>
+                                        <div class="tl-pole-3d"></div>
                                     </div>
                                 </div>
                                 <div class="v-info">
@@ -494,18 +459,13 @@
                     }
                 });
 
-                // Gestione stati vuoti
                 if (countMan === 0) gridMan.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Nessun mezzo in officina esterna</div>';
                 if (countOff === 0) gridOff.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Tutti i mezzi in sede sono operativi</div>';
 
-            } catch (e) { 
-                console.error("Errore aggiornamento dati:", e); 
-            }
+            } catch (e) { console.error("Errore:", e); }
         }
 
-        // Primo avvio e loop ogni 30 secondi
-        update();
-        setInterval(update, 30000); 
+        update(); setInterval(update, 30000); 
     </script>
 </body>
 </html>
