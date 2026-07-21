@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Palette Dark Mode (Ereditata dalla tua main) */
+            /* Palette Dark Mode */
             --bg-base: #09090b;
             --card-bg: #18181b;
             --border-color: #27272a;
@@ -60,7 +60,7 @@
         }
         
         .header h1::before {
-            content: '\f0ad'; /* Wrench icon */
+            content: '\f0ad';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             color: var(--orange);
@@ -99,30 +99,46 @@
         .col-manutenzione { border-top: 5px solid var(--orange); }
         .col-fuori-servizio { border-top: 5px solid var(--red); }
 
-        .col-header {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Gruppo Titolo + Sottotitolo */
+        .col-header-group {
             text-align: center;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 10px;
         }
+
+        .col-header {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         
         .col-manutenzione .col-header { color: var(--orange); }
         .col-fuori-servizio .col-header { color: var(--red); }
 
+        .col-subheader {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .vehicle-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
             overflow-y: auto;
             padding-right: 10px;
             align-content: start;
         }
 
-        /* Scrollbar */
         .vehicle-grid::-webkit-scrollbar { width: 6px; }
         .vehicle-grid::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
@@ -134,9 +150,10 @@
             padding: 24px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 24px;
             position: relative;
             overflow: hidden;
+            min-height: 130px;
         }
 
         .v-card.status-man { border-left: 4px solid var(--orange); }
@@ -145,85 +162,143 @@
             background: rgba(239, 68, 68, 0.05); 
         }
 
-        /* --- ANIMAZIONI --- */
+        /* --- CONTENITORE ANIMAZIONI --- */
         .anim-box {
             position: relative;
+            width: 120px;
+            height: 90px;
+            display: flex;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-sm);
+            flex-shrink: 0;
+            border-bottom: 2px solid var(--border-color); /* Pavimento */
+        }
+
+        /* ========================================= */
+        /* 1. ANIMAZIONE PONTE SOLLEVATORE & MECCANICO */
+        /* ========================================= */
+
+        .ponte-colonna {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 70px;
+            background: #475569;
+            border-radius: 2px 2px 0 0;
+        }
+        .ponte-colonna.sx { left: 20px; }
+        .ponte-colonna.dx { right: 20px; }
+
+        .ponte-piattaforma {
+            position: absolute;
+            bottom: 50px;
+            left: 10px;
             width: 100px;
-            height: 80px;
+            height: 6px;
+            background: var(--orange);
+            border-radius: 3px;
+        }
+
+        .ambulanza-man {
+            position: absolute;
+            bottom: 56px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.8rem;
+            color: var(--text-main);
+            z-index: 5;
+        }
+
+        .omino-sotto {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: flex-end;
-            justify-content: flex-start;
-            background: rgba(255,255,255,0.03);
-            border-radius: var(--radius-sm);
-            padding-bottom: 10px;
-            padding-left: 5px;
-            flex-shrink: 0;
+            justify-content: center;
+            z-index: 4;
+            animation: scivola-carrello 4s infinite alternate ease-in-out;
         }
 
-        /* 1. L'omino Meccanico (Manutenzione) */
-        .ambulanza-man {
-            font-size: 3.2rem;
-            color: var(--text-main);
-            z-index: 2;
-        }
-
-        .omino-wrapper {
+        .carrellino {
             position: absolute;
-            right: 12px; /* Si posiziona davanti al cofano */
-            bottom: 10px;
-            z-index: 3;
-            animation: omino-work 0.4s infinite alternate ease-in-out;
+            bottom: 0;
+            width: 34px;
+            height: 4px;
+            background: #ef4444;
+            border-radius: 2px;
         }
-
-        .omino-body {
-            font-size: 2.2rem;
-            color: var(--orange);
+        .carrellino::before, .carrellino::after {
+            content: ''; position: absolute; bottom: -2px; width: 6px; height: 6px; background: #000; border-radius: 50%;
         }
+        .carrellino::before { left: 2px; }
+        .carrellino::after { right: 2px; }
 
-        .omino-arm {
-            position: absolute;
-            left: -12px;
-            top: 6px;
-            font-size: 1.1rem;
+        .omino-corpo {
+            font-size: 1.6rem;
             color: var(--text-muted);
-            transform-origin: bottom right;
-            animation: omino-hit 0.4s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2px;
         }
 
-        /* Movimento del corpo dell'omino */
-        @keyframes omino-work {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-4px); }
+        .omino-braccio {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            transform-origin: bottom left;
+            animation: avvita-bullone 1.5s infinite alternate ease-in-out;
         }
 
-        /* Movimento del braccio col martello/chiave */
-        @keyframes omino-hit {
-            0% { transform: rotate(30deg); }
-            100% { transform: rotate(-50deg); }
+        @keyframes scivola-carrello {
+            0% { transform: translateX(-80%); }
+            100% { transform: translateX(10%); }
         }
 
-        /* 2. Il Semaforo (Fuori Servizio) */
+        @keyframes avvita-bullone {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-35deg); }
+        }
+
+        /* ========================================= */
+        /* 2. ANIMAZIONE SEMAFORO NETTO (Fuori Servizio)*/
+        /* ========================================= */
+
         .ambulanza-off {
-            font-size: 3.2rem;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            font-size: 3rem;
             color: var(--text-muted);
             opacity: 0.3;
             z-index: 1;
         }
 
-        .semaforo-box {
+        .semaforo-palo {
             position: absolute;
-            right: 10px;
-            bottom: 10px;
+            right: 25px;
+            bottom: 0;
+            width: 6px;
+            height: 60px;
+            background: #27272a;
+            z-index: 2;
+        }
+
+        .semaforo-corpo {
+            position: absolute;
+            right: 17px;
+            bottom: 30px;
             width: 22px;
-            height: 48px;
-            background: #18181b;
+            height: 52px;
+            background: #09090b;
             border-radius: 4px;
-            border: 2px solid #09090b;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
-            z-index: 2;
+            border: 2px solid #27272a;
+            z-index: 3;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
 
@@ -231,21 +306,20 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #3f3f46;
+            background: #18181b;
         }
 
         .luce.red {
-            background: var(--red);
-            animation: flash-red 0.8s infinite alternate;
+            animation: lampeggio-netto 1s infinite;
         }
 
-        @keyframes flash-red {
-            0% { opacity: 0.3; box-shadow: 0 0 2px var(--red); }
-            100% { opacity: 1; box-shadow: 0 0 15px var(--red); }
+        @keyframes lampeggio-netto {
+            0%, 49% { background: var(--red); box-shadow: 0 0 8px var(--red), 0 0 16px var(--red); }
+            50%, 100% { background: #18181b; box-shadow: none; }
         }
 
         /* Info Mezzo */
-        .v-info { display: flex; flex-direction: column; gap: 4px; }
+        .v-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .v-sigla { font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
         .v-modello { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;}
         .v-targa { 
@@ -280,9 +354,18 @@
         }
         body.light-mode .header { background: rgba(255, 255, 255, 0.95); }
         body.light-mode .v-card.status-off { background: rgba(239, 68, 68, 0.05); }
-        body.light-mode .anim-box { background: rgba(0,0,0,0.03); }
-        body.light-mode .semaforo-box { background: #3f3f46; border-color: #27272a; }
+        body.light-mode .anim-box { background: rgba(0,0,0,0.02); border-color: #d4d4d8; }
+        
+        body.light-mode .ponte-colonna { background: #94a3b8; }
+        body.light-mode .semaforo-palo { background: #52525b; }
+        body.light-mode .semaforo-corpo { background: #3f3f46; border-color: #27272a; }
         body.light-mode .luce { background: #71717a; }
+        
+        @keyframes lampeggio-netto-light {
+            0%, 49% { background: var(--red); box-shadow: 0 0 8px var(--red), 0 0 16px var(--red); }
+            50%, 100% { background: #71717a; box-shadow: none; }
+        }
+        body.light-mode .luce.red { animation: lampeggio-netto-light 1s infinite; }
 
     </style>
 </head>
@@ -296,7 +379,10 @@
     <div class="dashboard-split">
         <!-- Colonna Manutenzione -->
         <div class="column col-manutenzione">
-            <div class="col-header">In Manutenzione</div>
+            <div class="col-header-group">
+                <div class="col-header">In Manutenzione</div>
+                <div class="col-subheader">Mezzo presso officina meccanica autorizzata, allestitore o elettrauto</div>
+            </div>
             <div class="vehicle-grid" id="grid-manutenzione">
                 <!-- Generato da JS -->
             </div>
@@ -304,7 +390,10 @@
 
         <!-- Colonna Fuori Servizio -->
         <div class="column col-fuori-servizio">
-            <div class="col-header">Fuori Servizio</div>
+            <div class="col-header-group">
+                <div class="col-header">Fuori Servizio</div>
+                <div class="col-subheader">Mezzo presente in autoparco o distaccamento, non utilizzabile</div>
+            </div>
             <div class="vehicle-grid" id="grid-fuori-servizio">
                 <!-- Generato da JS -->
             </div>
@@ -351,16 +440,25 @@
 
                     if (!sigla) return;
 
-                    // Creazione HTML per MANUTENZIONE
+                    // Creazione HTML per MANUTENZIONE (Ponte Sollevatore)
                     if (status.includes("MANUTENZIONE")) {
                         countMan++;
                         gridMan.innerHTML += `
                             <div class="v-card status-man">
                                 <div class="anim-box">
+                                    <!-- Il Ponte Idraulico -->
+                                    <div class="ponte-colonna sx"></div>
+                                    <div class="ponte-colonna dx"></div>
+                                    <div class="ponte-piattaforma"></div>
+                                    
+                                    <!-- L'ambulanza sollevata -->
                                     <i class="fa-solid fa-truck-medical ambulanza-man"></i>
-                                    <div class="omino-wrapper">
-                                        <i class="fa-solid fa-wrench omino-arm"></i>
-                                        <i class="fa-solid fa-person omino-body"></i>
+                                    
+                                    <!-- L'omino sul carrellino sotto il ponte -->
+                                    <div class="omino-sotto">
+                                        <div class="carrellino"></div>
+                                        <i class="fa-solid fa-person omino-corpo"></i>
+                                        <i class="fa-solid fa-wrench omino-braccio"></i>
                                     </div>
                                 </div>
                                 <div class="v-info">
@@ -372,14 +470,15 @@
                         `;
                     }
                     
-                    // Creazione HTML per FUORI SERVIZIO
+                    // Creazione HTML per FUORI SERVIZIO (Semaforo)
                     if (status.includes("FUORI SERVIZIO")) {
                         countOff++;
                         gridOff.innerHTML += `
                             <div class="v-card status-off">
                                 <div class="anim-box">
                                     <i class="fa-solid fa-truck-medical ambulanza-off"></i>
-                                    <div class="semaforo-box">
+                                    <div class="semaforo-palo"></div>
+                                    <div class="semaforo-corpo">
                                         <div class="luce red"></div>
                                         <div class="luce"></div>
                                         <div class="luce"></div>
@@ -396,8 +495,8 @@
                 });
 
                 // Gestione stati vuoti
-                if (countMan === 0) gridMan.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Nessun mezzo in manutenzione</div>';
-                if (countOff === 0) gridOff.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Tutti i mezzi sono operativi</div>';
+                if (countMan === 0) gridMan.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Nessun mezzo in officina esterna</div>';
+                if (countOff === 0) gridOff.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Tutti i mezzi in sede sono operativi</div>';
 
             } catch (e) { 
                 console.error("Errore aggiornamento dati:", e); 
