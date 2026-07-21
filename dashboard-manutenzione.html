@@ -15,6 +15,7 @@
             --border-color: #27272a;
             --orange: #f59e0b;
             --red: #ef4444;
+            --green: #10b981;
             --text-main: #fafafa;
             --text-muted: #a1a1aa;
             --text-dark: #09090b;
@@ -147,53 +148,100 @@
         /* --- ANIMAZIONI --- */
         .anim-box {
             position: relative;
-            width: 80px;
+            width: 100px;
             height: 80px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
+            align-items: flex-end;
+            justify-content: flex-start;
+            background: rgba(255,255,255,0.03);
+            border-radius: var(--radius-sm);
+            padding-bottom: 10px;
+            padding-left: 5px;
             flex-shrink: 0;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
         }
 
-        .fa-truck-medical { color: var(--text-main); }
+        /* 1. L'omino Meccanico (Manutenzione) */
+        .ambulanza-man {
+            font-size: 3.2rem;
+            color: var(--text-main);
+            z-index: 2;
+        }
 
-        /* 1. Meccanico */
-        .wrench-anim {
+        .omino-wrapper {
             position: absolute;
+            right: 12px; /* Si posiziona davanti al cofano */
+            bottom: 10px;
+            z-index: 3;
+            animation: omino-work 0.4s infinite alternate ease-in-out;
+        }
+
+        .omino-body {
+            font-size: 2.2rem;
             color: var(--orange);
-            font-size: 1.5rem;
-            bottom: 5px;
-            right: 0px;
-            transform-origin: bottom left;
-            animation: wrench-turn 0.8s ease-in-out infinite alternate;
         }
 
-        @keyframes wrench-turn {
-            0% { transform: rotate(0deg) translateY(0); }
-            100% { transform: rotate(-40deg) translateY(-5px); }
-        }
-
-        /* 2. Semaforo / Lampeggiante */
-        .alert-beacon {
+        .omino-arm {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--red);
-            border-radius: 50%;
-            border: 2px solid #000;
-            box-shadow: 0 0 10px var(--red);
-            animation: pulse-red 1s infinite;
+            left: -12px;
+            top: 6px;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transform-origin: bottom right;
+            animation: omino-hit 0.4s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes pulse-red {
-            0% { transform: scale(1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); opacity: 0.8; }
-            50% { transform: scale(1.3); box-shadow: 0 0 20px rgba(239, 68, 68, 1); opacity: 1; }
-            100% { transform: scale(1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); opacity: 0.8; }
+        /* Movimento del corpo dell'omino */
+        @keyframes omino-work {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+
+        /* Movimento del braccio col martello/chiave */
+        @keyframes omino-hit {
+            0% { transform: rotate(30deg); }
+            100% { transform: rotate(-50deg); }
+        }
+
+        /* 2. Il Semaforo (Fuori Servizio) */
+        .ambulanza-off {
+            font-size: 3.2rem;
+            color: var(--text-muted);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .semaforo-box {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            width: 22px;
+            height: 48px;
+            background: #18181b;
+            border-radius: 4px;
+            border: 2px solid #09090b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            z-index: 2;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .luce {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #3f3f46;
+        }
+
+        .luce.red {
+            background: var(--red);
+            animation: flash-red 0.8s infinite alternate;
+        }
+
+        @keyframes flash-red {
+            0% { opacity: 0.3; box-shadow: 0 0 2px var(--red); }
+            100% { opacity: 1; box-shadow: 0 0 15px var(--red); }
         }
 
         /* Info Mezzo */
@@ -232,7 +280,9 @@
         }
         body.light-mode .header { background: rgba(255, 255, 255, 0.95); }
         body.light-mode .v-card.status-off { background: rgba(239, 68, 68, 0.05); }
-        body.light-mode .anim-box { background: rgba(0,0,0,0.05); }
+        body.light-mode .anim-box { background: rgba(0,0,0,0.03); }
+        body.light-mode .semaforo-box { background: #3f3f46; border-color: #27272a; }
+        body.light-mode .luce { background: #71717a; }
 
     </style>
 </head>
@@ -307,8 +357,11 @@
                         gridMan.innerHTML += `
                             <div class="v-card status-man">
                                 <div class="anim-box">
-                                    <i class="fa-solid fa-truck-medical"></i>
-                                    <i class="fa-solid fa-wrench wrench-anim"></i>
+                                    <i class="fa-solid fa-truck-medical ambulanza-man"></i>
+                                    <div class="omino-wrapper">
+                                        <i class="fa-solid fa-wrench omino-arm"></i>
+                                        <i class="fa-solid fa-person omino-body"></i>
+                                    </div>
                                 </div>
                                 <div class="v-info">
                                     <div class="v-sigla">${sigla}</div>
@@ -325,8 +378,12 @@
                         gridOff.innerHTML += `
                             <div class="v-card status-off">
                                 <div class="anim-box">
-                                    <i class="fa-solid fa-truck-medical"></i>
-                                    <div class="alert-beacon"></div>
+                                    <i class="fa-solid fa-truck-medical ambulanza-off"></i>
+                                    <div class="semaforo-box">
+                                        <div class="luce red"></div>
+                                        <div class="luce"></div>
+                                        <div class="luce"></div>
+                                    </div>
                                 </div>
                                 <div class="v-info">
                                     <div class="v-sigla">${sigla}</div>
@@ -338,7 +395,7 @@
                     }
                 });
 
-                // Gestione stati vuoti se non ci sono mezzi rotti (speriamo!)
+                // Gestione stati vuoti
                 if (countMan === 0) gridMan.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Nessun mezzo in manutenzione</div>';
                 if (countOff === 0) gridOff.innerHTML = '<div class="empty-state"><i class="fa-solid fa-check-circle" style="font-size: 2rem; color: var(--green); margin-bottom: 10px; display:block;"></i>Tutti i mezzi sono operativi</div>';
 
